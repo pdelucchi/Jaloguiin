@@ -1,0 +1,97 @@
+import Jaloguin.*
+
+describe "Tests del Ejercicio de Jaloguin"{
+	
+	var trajeTierno = new TrajeTierno()
+	var trajeTerrorifico = new TrajeTerrorifico()
+	
+	var juancito = new Nene(10,[trajeTierno,maquillaje],10)
+	var pedrito = new Nene(15,[trajeTerrorifico,maquillaje],15)
+	var oscarcito = new Nene(30,[trajeTerrorifico,maquillaje],20)
+	var lila = new Nene(30,[trajeTierno,maquillaje],40)
+	var nati = new Nene(50,[trajeTerrorifico,maquillaje],50)
+	
+	var jose = new Adulto()
+	var lidia = new Abuelo()
+	var jorge = new Necio()
+	
+	var legion1 = new Legion([juancito,pedrito,oscarcito])
+	var legion2 = new Legion([lila,nati,legion1])
+	
+	var barrio1 = new Barrio([juancito,pedrito,nati,lila,oscarcito])
+	
+	fixture{
+		maquillaje.moficiarSusto(3)
+	}
+	
+	test "Capacidad De Asustar de Juancito. Es 50"{
+		assert.equals(50,juancito.capacidadSusto())
+	}
+	test "Capacidad De Asustar de lila es 400"{
+		assert.equals(150,lila.capacidadSusto())
+		}
+	test "Capacidad De Asustar de nati es 400"{
+		assert.equals(400,nati.capacidadSusto())
+	}
+	test "jose se Asusta de pedrito"{
+		assert.that(jose.seAsusta(juancito))
+	}
+	test "pedrito recibe caramelos"{
+		jose.seAsusta(juancito)
+		assert.equals(10,juancito.caramelosEnPosesion())
+	}
+	test "La tolerancia de Jose luego de ser ser intentado asustar por 3 nenes sube su resistencia a 30. Nati logra asustar a Jose, por lo que obtiene 10 caramelos"{
+		jose.seAsusta(oscarcito)
+		jose.seAsusta(lila)
+		jose.seAsusta(nati)
+		assert.equals(30,jose.tolerancia())
+		assert.equals(60,nati.caramelosEnPosesion())
+	}
+	
+	test "Legion1 asusta a lidia"{
+		assert.that(lidia.seAsusta(legion1))
+	}
+	test "Legion1 obtiene 10 caramelos al asustar a jose"{
+		jose.seAsusta(nati)
+		jose.seAsusta(lila)
+		jose.seAsusta(legion1)
+		assert.equals(55,legion1.caramelosEnPosesion())
+	}
+	test "lider legion 1"{
+		assert.equals(oscarcito,legion1.liderLegion())
+	}
+	test "capacidad de susto legion1"{
+		assert.equals(410,legion1.capacidadSusto())
+	}
+	test "capacidad de susto legion2"{
+		assert.equals(960,legion2.capacidadSusto())
+	}
+	test "los 3 con mas caramelos del barrio 1 son"{
+		assert.equals([nati,lila,oscarcito],barrio1.los3ConMasCaramelos())
+	}
+	test "los elementos usados por los nenes con mas de 10 caramelos"{
+		assert.equals([trajeTierno,trajeTerrorifico,maquillaje],barrio1.elementosUsados())
+	}
+	test "nati come 10 caramelos"{
+	nati.comerCaramelos(10)
+	assert.equals(40,nati.caramelosEnPosesion())
+	}
+	test "nati pasa a estar empachada"{
+		nati.comerCaramelos(10)
+		assert.equals(estadoEmpachado,nati.estadoActual())
+	}
+	test "nati tiene la mitad de su actitud al empacharse"{
+		nati.comerCaramelos(10)
+		assert.equals(25,nati.actitud())
+	}
+	test "nati pasa a estar en Cama"{
+		nati.comerCaramelos(10)
+		nati.comerCaramelos(10)
+		assert.equals(estadoEnCama,nati.estadoActual())
+	}
+	test "nati no puede asustar debido a su estadoEnCama"{
+		nati.comerCaramelos(10)
+		nati.comerCaramelos(10)
+		assert.notThat(jose.seAsusta(nati))
+	}
+}
